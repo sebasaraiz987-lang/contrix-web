@@ -59,6 +59,27 @@
 - **Publicarla:** sube la carpeta tal cual a Netlify, Vercel o GitHub Pages, y pon esa URL en *Site URL* de Supabase y en `SITE_URL` de Stripe.
 - Si abres `index.html` con doble clic, la portada funciona, pero los correos de confirmación y el pago no, porque necesitan una dirección http.
 
+## Recuperar contraseña con código
+
+Contrix manda un código al correo. La persona lo escribe en la web junto con su contraseña nueva, que debe escribir dos veces. Para que el correo incluya el código:
+
+1. En Supabase ve a **Authentication → Emails → Templates → Reset Password** (en algunas versiones el menú se llama *Email Templates*).
+2. Cambia el asunto a: `Tu código para restablecer tu contraseña de Contrix`
+3. Reemplaza el cuerpo por:
+   ```html
+   <h2>Restablece tu contraseña de Contrix</h2>
+   <p>Tu código de verificación es:</p>
+   <p style="font-size:28px;font-weight:bold;letter-spacing:6px">{{ .Token }}</p>
+   <p>Escríbelo en la página de Contrix junto con tu contraseña nueva. El código vence en 1 hora.</p>
+   <p>Si no pediste este cambio, ignora este correo.</p>
+   ```
+4. Guarda. `{{ .Token }}` es el lugar donde Supabase pone el código.
+5. Opcional: en **Authentication → Providers → Email** (o *Sign In / Providers*) puedes ajustar cuánto dura el código (*Email OTP Expiration*) y cuántos dígitos tiene (*Email OTP Length*). Contrix acepta códigos de 6 a 10 dígitos.
+
+Si quieres que el correo también incluya el enlace, agrega `<a href="{{ .ConfirmationURL }}">Restablecer con un clic</a>`. Al abrirlo, Contrix pide la contraseña nueva dos veces.
+
+> En el plan gratuito, Supabase manda pocos correos por hora y solo uno cada 60 segundos por persona. Por eso el botón "Reenviar código" espera 60 segundos. Para producción, conecta tu propio servicio de correo en **Authentication → Emails → SMTP Settings**.
+
 ## 4. Lista 69-B (EFOS)
 
 Descarga el "Listado completo" del artículo 69-B (CSV) desde el portal de datos abiertos del SAT. Con tu cuenta de administrador, súbelo en **EFOS (69-B)**. Desde ese momento, cada XML que se cargue se cruza contra esa lista.

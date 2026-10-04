@@ -237,20 +237,30 @@
           <p class="auth-pie">¿Ya tienes cuenta? <a href="#/login">Inicia sesión</a></p>
         </form>
 
-        <!-- Recuperar -->
+        <!-- Recuperar: paso 1 (correo) y paso 2 (código + contraseña nueva) -->
         <form id="f-recuperar" class="oculto" novalidate>
-          <h1>Recupera tu acceso</h1><p class="sub">Te enviaremos un enlace para crear una nueva contraseña.</p>
+          <h1>Recupera tu acceso</h1><p class="sub" id="rc-sub">Te enviaremos un código a tu correo para crear una contraseña nueva.</p>
           <div class="msg" id="m-recuperar"></div>
-          <div class="campo"><label for="rc-email">Correo electrónico</label><input class="inp" id="rc-email" type="email" required></div>
-          <button class="btn btn-pri btn-g" style="width:100%" type="submit">Enviar enlace</button>
+          <div id="rc-paso1">
+            <div class="campo"><label for="rc-email">Correo electrónico</label><input class="inp" id="rc-email" type="email" autocomplete="email" required></div>
+            <button class="btn btn-pri btn-g" style="width:100%" type="submit" id="rc-enviar">Enviar código</button>
+          </div>
+          <div id="rc-paso2" class="oculto">
+            <div class="campo"><label for="rc-codigo">Código de verificación</label><input class="inp" id="rc-codigo" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="Ej. 123456" style="font-family:var(--mono);font-size:20px;letter-spacing:.3em;text-align:center"><span class="ayuda">Revisa tu bandeja de entrada y la carpeta de spam.</span></div>
+            <div class="campo"><label for="rc-pass">Contraseña nueva</label><input class="inp" id="rc-pass" type="password" autocomplete="new-password" minlength="8"><span class="ayuda">Mínimo 8 caracteres.</span></div>
+            <div class="campo"><label for="rc-pass2">Confirma la contraseña nueva</label><input class="inp" id="rc-pass2" type="password" autocomplete="new-password" minlength="8"></div>
+            <button class="btn btn-pri btn-g" style="width:100%" type="button" id="rc-cambiar">Cambiar contraseña</button>
+            <p class="auth-pie"><a id="rc-reenviar">Reenviar código</a> · <a id="rc-otro">Usar otro correo</a></p>
+          </div>
           <p class="auth-pie"><a href="#/login">Regresar a iniciar sesión</a></p>
         </form>
 
-        <!-- Nueva contraseña -->
+        <!-- Nueva contraseña (cuando se abre el enlace del correo) -->
         <form id="f-nueva" class="oculto" novalidate>
-          <h1>Nueva contraseña</h1><p class="sub">Escribe tu nueva contraseña.</p>
+          <h1>Nueva contraseña</h1><p class="sub">Escribe tu nueva contraseña y confírmala.</p>
           <div class="msg" id="m-nueva"></div>
-          <div class="campo"><label for="n-pass">Contraseña nueva</label><input class="inp" id="n-pass" type="password" minlength="8" required></div>
+          <div class="campo"><label for="n-pass">Contraseña nueva</label><input class="inp" id="n-pass" type="password" autocomplete="new-password" minlength="8" required><span class="ayuda">Mínimo 8 caracteres.</span></div>
+          <div class="campo"><label for="n-pass2">Confirma la contraseña nueva</label><input class="inp" id="n-pass2" type="password" autocomplete="new-password" minlength="8" required></div>
           <button class="btn btn-pri btn-g" style="width:100%" type="submit">Guardar contraseña</button>
         </form>
       </div>

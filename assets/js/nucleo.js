@@ -293,7 +293,7 @@
 
     if (partes[0] === '' ) { mostrar('v-landing'); window.scrollTo(0, 0); return; }
     if (['login', 'registro', 'recuperar', 'nueva-contrasena'].includes(partes[0])) {
-      if (C.usuario && partes[0] !== 'nueva-contrasena') { location.hash = '#/app/inicio'; return; }
+      if (C.usuario && partes[0] !== 'nueva-contrasena' && !C.cambiandoPass) { location.hash = '#/app/inicio'; return; }
       return vistaAuth(partes[0], params);
     }
     if (partes[0] === 'onboarding') {
@@ -318,6 +318,7 @@
     ['f-login', 'f-registro', 'f-recuperar', 'f-nueva'].forEach((f) => $('#' + f).classList.add('oculto'));
     const mapa = { login: 'f-login', registro: 'f-registro', recuperar: 'f-recuperar', 'nueva-contrasena': 'f-nueva' };
     $('#' + mapa[tipo]).classList.remove('oculto');
+    if (tipo === 'recuperar' && !C.cambiandoPass) pasoRecuperar(1);
     if (tipo === 'registro') {
       $('#r-plan').innerHTML = CFG.PLANES.map((p) => `<option value="${p.id}">${p.nombre} — $${p.precio.toLocaleString('es-MX')} MXN/mes + IVA</option>`).join('');
       if (params.get('plan')) $('#r-plan').value = params.get('plan');
@@ -358,27 +359,83 @@
     }
   });
 
-  $('#f-recuperar').addEventListener('submit', async (e) => {
-    e.preventDefault(); const f = e.target; limpiarMsg('m-recuperar');
+  /* Recuperar contraseña con código enviado al correo */
+  function validarNueva(p1, p2, idMsg) {
+    if (p1.length < 8) { msg(idMsg, 'La contraseña debe tener al menos 8 caracteres.'); return false; }
+    if (p1 !== p2) { msg(idMsg, 'Las contraseñas no coinciden. Escríbelas igual en los dos campos.'); return false; }
+    return true;
+  }
+  let rcEspera = 0, rcTimer = null;
+  function contadorReenvio() {
+    const a = $('#rc-reenviar'); clearInterval(rcTimer); rcEspera = 60;
+    const pintar = () => { a.textContent = rcEspera > 0 ? `Reenviar código (${rcEspera}s)` : 'Reenviar código'; a.style.pointerEvents = rcEspera > 0 ? 'none' : ''; a.style.opacity = rcEspera > 0 ? '.6' : ''; };
+    pintar(); rcTimer = setInterval(() => { rcEspera--; pintar(); if (rcEspera <= 0) clearInterval(rcTimer); }, 1000);
+  }
+  function pasoRecuperar(n) {
+    $('#rc-paso1').classList.toggle('oculto', n !== 1);
+    $('#rc-paso2').classList.toggle('oculto', n !== 2);
+    $('#rc-sub').textContent = n === 1 ? 'Te enviaremos un código a tu correo para crear una contraseña nueva.' : 'Escribe el código que te enviamos a ' + $('#rc-email').value.trim() + ' y tu contraseña nueva.';
+    if (n === 2) setTimeout(() => $('#rc-codigo').focus(), 50);
+  }
+  U.pasoRecuperar = pasoRecuperar;
+  async function enviarCodigo() {
     const email = $('#rc-email').value.trim();
-    if (!email) return msg('m-recuperar', 'Escribe tu correo.');
-    enviando(f, true);
+    if (!/^\S+@\S+\.\S+$/.test(email)) { msg('m-recuperar', 'Escribe un correo válido.'); return false; }
     const { error } = await C.sb.auth.resetPasswordForEmail(email, urlBase() ? { redirectTo: urlBase() } : undefined);
-    enviando(f, false);
-    if (error) return msg('m-recuperar', U.errorMsg(error));
-    msg('m-recuperar', 'Si existe una cuenta con ese correo, te llegará un enlace para crear una nueva contraseña.', 'ok');
+    if (error) { msg('m-recuperar', U.errorMsg(error)); return false; }
+    msg('m-recuperar', 'Si existe una cuenta con ese correo, te llegará un código en unos momentos.', 'ok');
+    contadorReenvio();
+    return true;
+  }
+  $('#f-recuperar').addEventListener('submit', async (e) => {
+    e.preventDefault(); limpiarMsg('m-recuperar');
+    const b = $('#rc-enviar'); b.classList.add('cargando'); b.disabled = true;
+    const ok = await enviarCodigo();
+    b.classList.remove('cargando'); b.disabled = false;
+    if (ok) pasoRecuperar(2);
   });
+  $('#rc-reenviar').onclick = async () => { if (rcEspera > 0) return; limpiarMsg('m-recuperar'); await enviarCodigo(); };
+  $('#rc-otro').onclick = () => { limpiarMsg('m-recuperar'); clearInterval(rcTimer); rcEspera = 0; pasoRecuperar(1); };
+  $('#rc-codigo').addEventListener('input', (e) => { e.target.value = e.target.value.replace(/\D/g, ''); });
+  $('#rc-cambiar').onclick = async () => {
+    limpiarMsg('m-recuperar');
+    const email = $('#rc-email').value.trim(), token = $('#rc-codigo').value.trim();
+    const p1 = $('#rc-pass').value, p2 = $('#rc-pass2').value;
+    if (!/^\d{6,10}$/.test(token)) return msg('m-recuperar', 'Escribe el código completo que llegó a tu correo (solo números).');
+    if (!validarNueva(p1, p2, 'm-recuperar')) return;
+    const b = $('#rc-cambiar'); b.classList.add('cargando'); b.disabled = true;
+    C.cambiandoPass = true;
+    try {
+      const { error } = await C.sb.auth.verifyOtp({ email, token, type: 'recovery' });
+      if (error) throw new Error(/expired|invalid|otp/i.test(error.message) ? 'El código no es válido o ya expiró. Pide uno nuevo con "Reenviar código".' : U.errorMsg(error));
+      const r = await C.sb.auth.updateUser({ password: p1 });
+      if (r.error) throw new Error(/same|different from the old/i.test(r.error.message) ? 'La contraseña nueva debe ser distinta a la anterior.' : U.errorMsg(r.error));
+      ['rc-codigo', 'rc-pass', 'rc-pass2'].forEach((id) => { $('#' + id).value = ''; });
+      pasoRecuperar(1);
+      C.cambiandoPass = false;
+      U.aviso('Contraseña actualizada. Ya iniciaste sesión.', 'ok');
+      if (!C.perfil) await cargarUsuario();
+      location.hash = C.empresas.length ? '#/app/inicio' : '#/onboarding';
+    } catch (err) {
+      C.cambiandoPass = false;
+      msg('m-recuperar', err.message);
+    }
+    b.classList.remove('cargando'); b.disabled = false;
+  };
 
   $('#f-nueva').addEventListener('submit', async (e) => {
     e.preventDefault(); const f = e.target; limpiarMsg('m-nueva');
-    const password = $('#n-pass').value;
-    if (password.length < 8) return msg('m-nueva', 'Mínimo 8 caracteres.');
+    const p1 = $('#n-pass').value, p2 = $('#n-pass2').value;
+    if (!validarNueva(p1, p2, 'm-nueva')) return;
     enviando(f, true);
-    const { error } = await C.sb.auth.updateUser({ password });
+    const { error } = await C.sb.auth.updateUser({ password: p1 });
     enviando(f, false);
-    if (error) return msg('m-nueva', U.errorMsg(error));
+    if (error) return msg('m-nueva', /same|different from the old/i.test(error.message) ? 'La contraseña nueva debe ser distinta a la anterior.' : U.errorMsg(error));
+    $('#n-pass').value = ''; $('#n-pass2').value = '';
+    C.recuperando = false;
     U.aviso('Contraseña actualizada', 'ok');
-    location.hash = '#/app/inicio';
+    if (!C.perfil) await cargarUsuario();
+    location.hash = C.empresas.length ? '#/app/inicio' : '#/onboarding';
   });
 
   /* ── Carga de datos del usuario ─────────────────────────── */
@@ -554,14 +611,13 @@
       return;
     }
 
-    let recuperando = false;
     C.sb.auth.onAuthStateChange(async (evento, sesion) => {
-      if (evento === 'PASSWORD_RECOVERY') { recuperando = true; C.sesion = sesion; C.usuario = sesion?.user || null; location.hash = '#/nueva-contrasena'; return; }
+      if (evento === 'PASSWORD_RECOVERY') { if (C.cambiandoPass) return; C.recuperando = true; C.sesion = sesion; C.usuario = sesion?.user || null; location.hash = '#/nueva-contrasena'; return; }
       if (evento === 'SIGNED_IN' && sesion && (!C.usuario || C.usuario.id !== sesion.user.id)) {
         C.sesion = sesion; C.usuario = sesion.user;
         setTimeout(async () => {
           await cargarUsuario(); indicadores();
-          if (recuperando) return;
+          if (C.recuperando || C.cambiandoPass) return;
           const { ruta } = parsearHash();
           if (!ruta.startsWith('#/app')) location.hash = C.empresas.length ? '#/app/inicio' : '#/onboarding';
           else enrutar();
