@@ -68,6 +68,8 @@
       if (/Email not confirmed/i.test(m)) return 'Tu correo aún no está confirmado. Revisa tu bandeja de entrada.';
       if (/User already registered/i.test(m)) return 'Ya existe una cuenta con ese correo. Inicia sesión.';
       if (/Password should be at least/i.test(m)) return 'La contraseña es muy corta.';
+      if (/email rate limit/i.test(m)) return 'Se alcanzó el límite de correos por hora del servidor. Espera unos minutos e intenta de nuevo.';
+      if (/security purposes|after \d+ seconds/i.test(m)) return 'Por seguridad, espera un minuto antes de pedir otro correo.';
       if (/rate limit/i.test(m)) return 'Demasiados intentos. Espera un momento y vuelve a intentar.';
       if (/Failed to fetch|NetworkError/i.test(m)) return 'No hay conexión con el servidor. Revisa tu internet.';
       if (/duplicate key value.*uuid_sat/i.test(m)) return 'Ese CFDI ya estaba cargado.';
