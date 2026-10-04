@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contrix — Contabilidad fiscal para México</title>
+<meta name="description" content="Contrix: analiza tus CFDI, registra pólizas, calcula IVA, cruza la lista 69-B y exporta a Excel.">
+<link rel="icon" type="image/png" href="assets/img/contrix-isotipo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/contrix.css">
+</head>
+<body>
+
+<!-- ═══════════ ÍCONOS ═══════════ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></symbol>
+    <symbol id="i-plus-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M12 12v6M9 15h6"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+    <symbol id="i-scale" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 21h14M3 7h18M6 7l-3 7a3 3 0 0 0 6 0zM18 7l-3 7a3 3 0 0 0 6 0z"/></symbol>
+    <symbol id="i-percent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 5 5 19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol>
+    <symbol id="i-sync" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-15.5 6.3L3 16M3 12a9 9 0 0 1 15.5-6.3L21 8"/><path d="M21 3v5h-5M3 21v-5h5"/></symbol>
+    <symbol id="i-git" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><path d="M6 9v3a6 6 0 0 0 6 6h3"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></symbol>
+    <symbol id="i-news" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8M15 18h-5M10 6h8v4h-8z"/></symbol>
+    <symbol id="i-card" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol>
+    <symbol id="i-excel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M7 15v2M11 11v6M15 7v10M19 12v5"/></symbol>
+    <symbol id="i-building" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M16 6h.01M12 6h.01M12 10h.01M12 14h.01M16 10h.01M16 14h.01M8 10h.01M8 14h.01"/></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+    <symbol id="i-logout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></symbol>
+    <symbol id="i-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3"/></symbol>
+    <symbol id="i-trend" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m23 6-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+    <symbol id="i-paperclip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.4 11-9.2 9.2a6 6 0 0 1-8.5-8.5l9.2-9.2a4 4 0 0 1 5.7 5.7l-9.2 9.2a2 2 0 0 1-2.8-2.8l8.5-8.5"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8L20 10l-6.1 1.2L12 17l-1.9-5.8L4 10l6.1-1.2z"/></symbol>
+  </defs>
+</svg>
+
+<div class="carga-pantalla" id="carga-pantalla"><img src="assets/img/contrix-isotipo.png" alt="Cargando Contrix"></div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     LANDING
+     ═══════════════════════════════════════════════════════════ -->
+<section class="vista" id="v-landing">
+  <nav class="nav" id="nav">
+    <a class="marca" href="#/"><img src="assets/img/contrix-logo.png" alt="Contrix"></a>
+    <div class="nav-links">
+      <a href="#funciones" data-ancla>Funciones</a>
+      <a href="#planes" data-ancla>Planes</a>
+      <a href="#noticias" data-ancla>Noticias</a>
+      <a href="#preguntas" data-ancla>Preguntas</a>
+    </div>
+    <div class="nav-der">
+      <a class="btn btn-fant" href="#/login">Iniciar sesión</a>
+      <a class="btn btn-pri" href="#/registro">Prueba 30 días</a>
+    </div>
+    <button class="nav-menu" id="nav-menu" aria-label="Menú"><svg><use href="#i-menu"/></svg></button>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-in">
+      <div>
+        <span class="sello"><b>CFDI 4.0</b> Contabilidad fiscal para México</span>
+        <h1>Tus facturas, tu contabilidad y el SAT <em>en un solo lugar.</em></h1>
+        <p class="lead">Contrix lee tus CFDI, detecta errores, te avisa qué complementos de pago faltan, calcula tu IVA y arma tus pólizas. Todo exportable a Excel.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-blanco btn-g" href="#/registro">Crear cuenta gratis <svg><use href="#i-arrow"/></svg></a>
+          <a class="btn btn-vidrio btn-g" href="#planes" data-ancla>Ver planes</a>
+        </div>
+        <div class="hero-notas">
+          <span><svg><use href="#i-check"/></svg>30 días de prueba</span>
+          <span><svg><use href="#i-check"/></svg>Sin tarjeta para empezar</span>
+          <span><svg><use href="#i-check"/></svg>Tus XML se analizan en tu navegador</span>
+        </div>
+      </div>
+
+      <div class="analizador" id="analizador">
+        <img class="isotipo-flotante" src="assets/img/contrix-isotipo.png" alt="">
+        <div class="analizador-cab"><b>Pruébalo ahora: analizador de CFDI</b></div>
+        <label class="zona-xml" id="zona-xml">
+          <input type="file" accept=".xml,text/xml" hidden id="xml-demo">
+          <svg><use href="#i-upload"/></svg>
+          <p><b>Arrastra un XML de factura</b> o haz clic para elegirlo</p>
+          <small>Se revisa aquí mismo; no se sube a ningún servidor.</small>
+        </label>
+        <div class="revisiones" id="revisiones">
+          <div class="revision" style="animation-delay:.1s"><span class="ico"><svg><use href="#i-check"/></svg></span>¿Está timbrado y es versión 4.0?</div>
+          <div class="revision" style="animation-delay:.25s"><span class="ico"><svg><use href="#i-check"/></svg></span>¿Cuadran conceptos, impuestos y total?</div>
+          <div class="revision" style="animation-delay:.4s"><span class="ico"><svg><use href="#i-check"/></svg></span>¿Forma y método de pago son congruentes?</div>
+          <div class="revision" style="animation-delay:.55s"><span class="ico"><svg><use href="#i-check"/></svg></span>¿Es PPD y necesita complemento de pago?</div>
+        </div>
+        <div class="analizador-res oculto" id="analizador-res"></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="franja"><div class="franja-pista" id="franja"></div></div>
+
+  <section class="seccion" id="funciones">
+    <div class="seccion-in">
+      <span class="kicker">Funciones</span>
+      <h2 class="titulo-sec">Todo lo que un contador revisa cada mes, ordenado en un tablero.</h2>
+      <p class="sub-sec">Cada función indica si ya opera o qué falta conectar. Sin promesas de más.</p>
+      <div class="bento" id="bento"></div>
+    </div>
+  </section>
+
+  <section class="seccion nube">
+    <div class="seccion-in">
+      <span class="kicker">Cómo funciona</span>
+      <h2 class="titulo-sec">Tres pasos para tener tu mes en orden.</h2>
+      <div class="pasos">
+        <div class="paso"><h3>Crea tu cuenta y tu empresa</h3><p>Regístrate con tu correo y da de alta el RFC, régimen fiscal y código postal de tu empresa.</p></div>
+        <div class="paso"><h3>Carga tus XML</h3><p>Sube los XML (sueltos o en .zip) de lo que emitiste y recibiste. Contrix los lee, valida y clasifica.</p></div>
+        <div class="paso"><h3>Revisa y exporta</h3><p>Consulta IVA, errores, complementos pendientes y proveedores en 69-B. Genera pólizas y exporta a Excel.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion" id="planes">
+    <div class="seccion-in">
+      <span class="kicker">Planes</span>
+      <h2 class="titulo-sec">Elige el plan para el tamaño de tu operación.</h2>
+      <p class="sub-sec">Todos empiezan con 30 días de prueba. Pago mensual con tarjeta de crédito o débito, procesado por Stripe.</p>
+      <div class="planes" id="planes-lista"></div>
+      <div class="tabla-env" style="margin-top:28px;border:0"><table class="tabla-comp" id="tabla-comp"></table></div>
+    </div>
+  </section>
+
+  <section class="seccion nube" id="noticias">
+    <div class="seccion-in">
+      <span class="kicker">Noticias</span>
+      <h2 class="titulo-sec">Lo más relevante en materia fiscal y económica.</h2>
+      <p class="sub-sec" id="noticias-fecha"></p>
+      <div class="noticias" id="noticias-lista"></div>
+      <div class="aviso-legal"><svg><use href="#i-info"/></svg><div><b>Aviso de derechos de autor.</b> Los resúmenes son redacción propia de Contrix y no reproducen el texto original. La información pertenece a sus autores; consulta siempre la fuente enlazada. Las iniciativas mencionadas no son ley hasta su aprobación y publicación en el DOF.</div></div>
+    </div>
+  </section>
+
+  <section class="seccion" id="preguntas">
+    <div class="seccion-in">
+      <div style="text-align:center"><span class="kicker">Preguntas frecuentes</span><h2 class="titulo-sec" style="margin:0 auto">Lo que suelen preguntarnos</h2></div>
+      <div class="faq">
+        <details><summary>¿Necesito tarjeta para la prueba?</summary><p>No. Creas tu cuenta y tienes 30 días para usarla. Al terminar eliges un plan y pagas con tarjeta desde la sección "Plan y pagos".</p></details>
+        <details><summary>¿Contrix descarga mis facturas del SAT automáticamente?</summary><p>Todavía no. La descarga masiva requiere tu e.firma y un servicio en servidor que estamos conectando. Mientras tanto puedes subir tus XML (sueltos o en .zip, como los entrega el SAT) y Contrix hace todo el análisis.</p></details>
+        <details><summary>¿Puedo timbrar facturas?</summary><p>Puedes capturar la factura y descargar el XML 4.0 como borrador. El timbrado requiere un Proveedor de Certificación (PAC) autorizado, que aún no está conectado.</p></details>
+        <details><summary>¿El cálculo de IVA sustituye mi declaración?</summary><p>No. Es un cálculo preliminar con base en los CFDI cargados (flujo de efectivo: PUE y complementos de pago). No considera proporción de acreditamiento, actos exentos ni tasa 0. Revísalo con tu contador.</p></details>
+        <details><summary>¿Dónde se guardan mis datos?</summary><p>En una base de datos PostgreSQL (Supabase) con seguridad a nivel de fila: cada usuario solo ve las empresas a las que pertenece.</p></details>
+        <details><summary>¿Puedo cancelar cuando quiera?</summary><p>Sí. Desde "Plan y pagos" abres el portal de facturación de Stripe y cancelas o cambias tu tarjeta.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion" style="padding-top:0">
+    <div class="seccion-in">
+      <div class="cta-final">
+        <div><h2>Empieza hoy con tus propios XML.</h2><p>Crea tu cuenta, da de alta tu empresa y sube tu primer archivo en minutos.</p></div>
+        <a class="btn btn-blanco btn-g" href="#/registro">Crear cuenta <svg><use href="#i-arrow"/></svg></a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="pie">
+    <div class="pie-in">
+      <div><img src="assets/img/contrix-isotipo.png" alt="" style="height:34px;margin-bottom:12px"><p style="max-width:300px">Software de contabilidad fiscal para personas y empresas en México.</p></div>
+      <div><h4>Producto</h4><a href="#funciones" data-ancla>Funciones</a><a href="#planes" data-ancla>Planes</a><a href="#noticias" data-ancla>Noticias</a></div>
+      <div><h4>Cuenta</h4><a href="#/login">Iniciar sesión</a><a href="#/registro">Crear cuenta</a><a href="#/recuperar">Recuperar contraseña</a></div>
+      <div><h4>Fuentes oficiales</h4><a href="https://www.sat.gob.mx" target="_blank" rel="noopener">SAT</a><a href="https://www.banxico.org.mx" target="_blank" rel="noopener">Banxico</a><a href="https://www.inegi.org.mx" target="_blank" rel="noopener">INEGI</a><a href="https://www.dof.gob.mx" target="_blank" rel="noopener">DOF</a></div>
+    </div>
+    <div class="pie-base"><span>© <span id="anio"></span> Contrix</span><span>Indicadores y noticias con fuente enlazada · Pagos procesados por Stripe</span></div>
+  </footer>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     ACCESO (login / registro / recuperar / nueva contraseña)
+     ═══════════════════════════════════════════════════════════ -->
+<section class="vista" id="v-auth">
+  <div class="auth">
+    <div class="auth-arte">
+      <a href="#/"><img src="assets/img/contrix-isotipo.png" alt="Contrix" style="height:40px"></a>
+      <div>
+        <h2>Tu contabilidad fiscal, clara y al día.</h2>
+        <ul>
+          <li><svg><use href="#i-check"/></svg>Análisis y validación de CFDI 4.0</li>
+          <li><svg><use href="#i-check"/></svg>Pólizas, balanza y exportación a Excel</li>
+          <li><svg><use href="#i-check"/></svg>IVA preliminar y complementos pendientes</li>
+          <li><svg><use href="#i-check"/></svg>Cruce con la lista 69-B del SAT</li>
+        </ul>
+      </div>
+      <small style="color:rgba(255,255,255,.55)">Tus datos se protegen con seguridad a nivel de fila.</small>
+    </div>
+    <div class="auth-form">
+      <div class="auth-caja">
+        <a class="volver" href="#/"><svg><use href="#i-back"/></svg>Volver al inicio</a>
+
+        <!-- Login -->
+        <form id="f-login" class="oculto" novalidate>
+          <h1>Inicia sesión</h1><p class="sub">Entra a tu cuenta de Contrix.</p>
+          <div class="msg" id="m-login"></div>
+          <div class="campo"><label for="l-email">Correo electrónico</label><input class="inp" id="l-email" type="email" autocomplete="email" required></div>
+          <div class="campo"><label for="l-pass">Contraseña</label><input class="inp" id="l-pass" type="password" autocomplete="current-password" required></div>
+          <div style="text-align:right;margin:-6px 0 16px"><a class="auth-pie" href="#/recuperar" style="color:var(--azul);font-weight:650;text-decoration:none;font-size:13px">¿Olvidaste tu contraseña?</a></div>
+          <button class="btn btn-pri btn-g" style="width:100%" type="submit">Entrar</button>
+          <p class="auth-pie">¿No tienes cuenta? <a href="#/registro">Crea una</a></p>
+        </form>
+
+        <!-- Registro -->
+        <form id="f-registro" class="oculto" novalidate>
+          <h1>Crea tu cuenta</h1><p class="sub">30 días de prueba. Sin tarjeta.</p>
+          <div class="msg" id="m-registro"></div>
+          <div class="campo"><label for="r-nombre">Nombre completo</label><input class="inp" id="r-nombre" autocomplete="name" required></div>
+          <div class="campo"><label for="r-email">Correo electrónico</label><input class="inp" id="r-email" type="email" autocomplete="email" required></div>
+          <div class="campo"><label for="r-pass">Contraseña</label><input class="inp" id="r-pass" type="password" autocomplete="new-password" minlength="8" required><span class="ayuda">Mínimo 8 caracteres.</span></div>
+          <div class="campo"><label for="r-plan">Plan de interés</label><select class="inp" id="r-plan"></select><span class="ayuda">Durante la prueba tienes los límites del plan PYMES; al suscribirte se aplica el plan que elijas.</span></div>
+          <button class="btn btn-pri btn-g" style="width:100%" type="submit">Crear cuenta</button>
+          <p class="auth-pie">¿Ya tienes cuenta? <a href="#/login">Inicia sesión</a></p>
+        </form>
+
+        <!-- Recuperar -->
+        <form id="f-recuperar" class="oculto" novalidate>
+          <h1>Recupera tu acceso</h1><p class="sub">Te enviaremos un enlace para crear una nueva contraseña.</p>
+          <div class="msg" id="m-recuperar"></div>
+          <div class="campo"><label for="rc-email">Correo electrónico</label><input class="inp" id="rc-email" type="email" required></div>
+          <button class="btn btn-pri btn-g" style="width:100%" type="submit">Enviar enlace</button>
+          <p class="auth-pie"><a href="#/login">Regresar a iniciar sesión</a></p>
+        </form>
+
+        <!-- Nueva contraseña -->
+        <form id="f-nueva" class="oculto" novalidate>
+          <h1>Nueva contraseña</h1><p class="sub">Escribe tu nueva contraseña.</p>
+          <div class="msg" id="m-nueva"></div>
+          <div class="campo"><label for="n-pass">Contraseña nueva</label><input class="inp" id="n-pass" type="password" minlength="8" required></div>
+          <button class="btn btn-pri btn-g" style="width:100%" type="submit">Guardar contraseña</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     ALTA DE EMPRESA
+     ═══════════════════════════════════════════════════════════ -->
+<section class="vista" id="v-onboarding">
+  <div class="onb">
+    <div class="onb-caja">
+      <img src="assets/img/contrix-logo.png" alt="Contrix" style="height:30px;margin-bottom:22px">
+      <h1 style="font-size:26px;color:var(--rey-900);letter-spacing:-.02em">Da de alta tu empresa</h1>
+      <p style="color:var(--gris);margin:6px 0 24px">Usaremos estos datos para clasificar tus CFDI como emitidos o recibidos.</p>
+      <div class="msg" id="m-onb"></div>
+      <form id="f-empresa" novalidate>
+        <div class="rejilla r2">
+          <div class="campo"><label>RFC</label><input class="inp" name="rfc" maxlength="13" required style="text-transform:uppercase"></div>
+          <div class="campo"><label>Código postal (domicilio fiscal)</label><input class="inp" name="codigo_postal" maxlength="5" inputmode="numeric" required></div>
+        </div>
+        <div class="campo"><label>Razón social / nombre (como aparece en tu constancia)</label><input class="inp" name="razon_social" required style="text-transform:uppercase"></div>
+        <div class="rejilla r2">
+          <div class="campo"><label>Régimen fiscal</label><select class="inp" name="regimen_fiscal" required></select></div>
+          <div class="campo"><label>Nombre comercial (opcional)</label><input class="inp" name="nombre_comercial"></div>
+        </div>
+        <div class="campo"><label><input type="checkbox" name="catalogo_base" checked> Cargar catálogo de cuentas base con código agrupador SAT (podrás editarlo)</label></div>
+        <div style="display:flex;gap:10px;justify-content:space-between;margin-top:8px;flex-wrap:wrap">
+          <button type="button" class="btn btn-fant" id="onb-salir"><svg><use href="#i-logout"/></svg>Cerrar sesión</button>
+          <button class="btn btn-pri btn-g" type="submit">Guardar y entrar <svg><use href="#i-arrow"/></svg></button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     APLICACIÓN
+     ═══════════════════════════════════════════════════════════ -->
+<section class="vista" id="v-app">
+  <div class="app" id="app">
+    <aside class="lateral" id="lateral">
+      <div class="marca"><img src="assets/img/contrix-isotipo.png" alt=""><span>Contrix</span></div>
+      <nav id="menu-app"></nav>
+      <div class="abajo"><div class="tarjeta-plan" id="tarjeta-plan"></div></div>
+    </aside>
+    <main class="principal">
+      <header class="barra">
+        <button class="btn-lateral" id="btn-lateral" aria-label="Menú"><svg><use href="#i-menu"/></svg></button>
+        <div class="titulo" id="titulo-mod">Inicio</div>
+        <div class="der">
+          <div class="ind-mini" id="ind-mini" title="Indicadores"></div>
+          <label class="selector" title="Empresa activa"><svg><use href="#i-building"/></svg><select id="sel-empresa"></select></label>
+          <label class="selector" title="Periodo"><svg><use href="#i-cal"/></svg><select id="sel-mes"></select><select id="sel-anio"></select></label>
+          <button class="avatar" id="avatar" aria-label="Mi cuenta"></button>
+        </div>
+        <div class="menu-usuario" id="menu-usuario"></div>
+      </header>
+      <div class="contenido" id="contenido"></div>
+    </main>
+  </div>
+</section>
+
+<!-- Widget de indicadores (esquina) -->
+<div class="widget-ind oculto" id="widget-ind">
+  <div class="panel" id="widget-panel"></div>
+  <div class="pastilla" id="widget-pastilla"></div>
+</div>
+
+<div class="capa" id="capa"><div class="modal" id="modal"></div></div>
+<div class="avisos" id="avisos"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/datos-publicos.js"></script>
+<script src="assets/js/catalogos-sat.js"></script>
+<script src="assets/js/cfdi.js"></script>
+<script src="assets/js/nucleo.js"></script>
+<script src="assets/js/modulos.js"></script>
+<script src="assets/js/modulos2.js"></script>
+</body>
+</html>
