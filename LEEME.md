@@ -17,6 +17,8 @@
 
 ## 1. Base de datos (5 minutos)
 
+> **Si Contrix muestra "column … does not exist"**, tu base tiene tablas de una versión anterior. En ese caso corre **`supabase/instalar-base-completa.sql`** en lugar de los pasos 1 y 2 de abajo. El script instala todo de una vez: borra y vuelve a crear las tablas de Contrix, conserva los usuarios y vuelve a crear sus perfiles.
+
 1. Entra a tu proyecto en supabase.com → **SQL Editor** → **New query**.
 2. Pega todo `supabase/migracion-final.sql` y presiona **Run**.
    - Borra las semillas de ejemplo del esquema anterior. Esas semillas marcaban el RFC genérico XAXX010101AAA como EFOS e incluían indicadores de 2025.
