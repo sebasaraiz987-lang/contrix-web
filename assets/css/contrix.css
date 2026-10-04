@@ -143,9 +143,9 @@ img{max-width:100%;display:block}
 .analizador-res div{background:rgba(255,255,255,.07);border-radius:12px;padding:10px}
 .analizador-res small{display:block;font-size:11px;color:rgba(255,255,255,.6)}
 .analizador-res b{font-size:15px}
-.isotipo-flotante{position:absolute;width:92px;right:-34px;top:-70px;filter:drop-shadow(0 20px 30px rgba(0,0,0,.35));animation:flota 6s ease-in-out infinite}
+.cab-titulo{display:flex;align-items:center;gap:10px}
+.isotipo-cab{width:22px;height:auto;flex-shrink:0;filter:drop-shadow(0 4px 8px rgba(0,0,0,.3))}
 @keyframes flota{50%{transform:translateY(-10px) rotate(-3deg)}}
-@media(max-width:980px){.isotipo-flotante{display:none}}
 
 /* Franja de indicadores */
 .franja{background:var(--rey-900);color:#fff;overflow:hidden;border-top:1px solid rgba(255,255,255,.08)}
